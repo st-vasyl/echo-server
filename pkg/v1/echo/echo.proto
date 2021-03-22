@@ -1,0 +1,18 @@
+// pkg/v1/echo/echo.proto
+syntax = "proto3";
+
+package echo;
+
+option go_package = "v1/echo";
+
+service Echo {
+    rpc Echo (EchoRequest) returns (EchoResponse) {}
+}
+
+message EchoRequest {
+    string text = 1;
+}
+
+message EchoResponse {
+    string echo = 1;
+}

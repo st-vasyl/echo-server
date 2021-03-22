@@ -1,8 +1,7 @@
-FROM golang:1.15 as build
-WORKDIR /go/src/github.com/st-vasyl/echo/
+FROM golang:1.20 as build
+WORKDIR /go/src/github.com/st-vasyl/echo-server/
 COPY . .
-RUN go get -d -v github.com/sirupsen/logrus && \
-    echo $GOPATH $GOROOT && \
+RUN go mod tidy && \
     CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build -a -installsuffix cgo -o echo .
 
 FROM alpine:3.9
@@ -23,15 +22,15 @@ RUN apk update && \
     adduser -u 1000 \
             -S \
             -D -G echo \
-            -h /home/echo \
+            -h /home/echo-server \
             -s /bin/bash \
             echo && \
-    mkdir -p /opt/echo && \
-    chown -R echo:echo /opt/echo
+    mkdir -p /opt/echo-server && \
+    chown -R echo:echo /opt/echo-server
 
-COPY --from=build /go/src/github.com/st-vasyl/echo/echo /opt/echo/echo
+COPY --from=build /go/src/github.com/st-vasyl/echo-server/echo /opt/echo-server/echo
 USER echo
-WORKDIR /opt/echo
+WORKDIR /opt/echo-server
 
 
-CMD ["/opt/echo/echo"]
+CMD ["/opt/echo-server/echo"]

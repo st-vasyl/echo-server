@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"net"
+	"os"
 
 	"github.com/st-vasyl/echo-server/pkg/v1/echo"
 	"google.golang.org/grpc"
@@ -18,8 +19,10 @@ type echoService struct {
 }
 
 func (*echoService) Echo(ctx context.Context, req *echo.EchoRequest) (*echo.EchoResponse, error) {
+	hostname, _ := os.Hostname()
 	return &echo.EchoResponse{
-		Echo: req.Text,
+		Echo:     req.Text,
+		Hostname: hostname,
 	}, nil
 }
 

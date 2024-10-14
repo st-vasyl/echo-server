@@ -15,4 +15,5 @@ message EchoRequest {
 
 message EchoResponse {
     string echo = 1;
+    string hostname = 2;
 }

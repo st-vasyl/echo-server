@@ -1,4 +1,4 @@
-FROM golang:1.20 as build
+FROM golang:1.23 as build
 WORKDIR /go/src/github.com/st-vasyl/echo-server/
 COPY . .
 RUN go mod tidy && \

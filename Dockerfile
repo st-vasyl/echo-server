@@ -1,8 +1,15 @@
 FROM golang:1.23 as build
 WORKDIR /go/src/github.com/st-vasyl/echo-server/
 COPY . .
+
+ARG GIT_BRANCH
+ARG GIT_HASH
+ARG APP_VERSION
+
+ENV BUILD_FLAGS="-X 'main.Branch=${GIT_BRANCH}' -X 'main.CommitHash=${GIT_HASH}' -X 'main.Version=${APP_VERSION}'"
+
 RUN go mod tidy && \
-    CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build -a -installsuffix cgo -o echo .
+    CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build -a -installsuffix cgo -o echo -ldflags "${BUILD_FLAGS}" .
 
 FROM alpine:3.9
 LABEL MAINTAINER "Vasyl Stetsuryn <vasyl@vasyl.org>"
@@ -32,5 +39,7 @@ COPY --from=build /go/src/github.com/st-vasyl/echo-server/echo /opt/echo-server/
 USER echo
 WORKDIR /opt/echo-server
 
+LABEL Name="${GIT_REPO}" \
+    Version="${APP_VERSION}"
 
 CMD ["/opt/echo-server/echo"]
